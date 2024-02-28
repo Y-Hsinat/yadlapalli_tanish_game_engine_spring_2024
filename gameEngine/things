@@ -1,0 +1,11 @@
+Integer? x = 10
+Integer? x equals 10 //same as above, symbols can be replaced with words for more english-like syntax
+
+screen1 = (Window["Window #1"])
+
+(Write[x])::On.screen1
+(If) x is > 15{
+    x++
+    //updates everything on screen1
+    (Update[screen1])
+} 
