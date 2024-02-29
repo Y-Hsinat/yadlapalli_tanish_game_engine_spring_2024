@@ -31,6 +31,8 @@ class Game:
     #load data method
     def load_data(self):
         game_folder = path.dirname(__file__)
+        img_folder = path.join(game_folder, 'images')
+        self.player_img = pg.image.load(path.join(img_folder, 'thing.png')).convert_alpha()
         self.map_data = []
         '''
         The with statement is a context manager in Python. 
@@ -49,8 +51,8 @@ class Game:
         self.walls = pg.sprite.Group()
         self.grow = pg.sprite.Group()
         self.shrink = pg.sprite.Group()
-        ##self.player = Player(self, 10, 10)
-        ##self.all_sprites.add(self.player)
+        self.coins = pg.sprite.Group()
+        self.enemy = pg.sprite.Group()
         for row, tiles in enumerate(self.map_data):
             print(row)
             for col, tile in enumerate(tiles):
@@ -63,15 +65,18 @@ class Game:
                 if tile == 'p':
                     self.player = Player(self, col, row)
                 #spawn grow
-                if tile == '*':
+                if tile == '>':
                     Grow(self, col, row)
                 #spawn shrink
                 if tile == '<':
                     Shrink(self, col, row)
-
-                    
-        # for x in range(10, 20):
-        #     Wall(self, x, 5)
+                #spawn coin
+                if tile == 'c':
+                    print("coin at", row, col)
+                    Coin(self, col, row)
+                #spawn enemy
+                if tile == 'e':
+                    Enemy(self, col, row)
 
     #Run methods, causes the game to work.
     def run(self):
@@ -99,15 +104,25 @@ class Game:
     #draws the grid over screen
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
-            pg.draw.line(self.screen, LIGHTGREY, (x,0,), (x, HEIGHT))
-        for y in range(0, HEIGHT, TILESIZE):
-            pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH,y))
+            pg.draw.line(self.screen, LIGHTGREY, (x, 0,), (x, HEIGHT))
+        for y in range(0, HEIGHT, TILESIZE): 
+            pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
+            
+    #draw text to the screen
+    def draw_text(self, surface, text, size, color, x, y):
+        font_name = pg.font.match_font('Consolas')
+        font = pg.font.Font(font_name, size)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.topleft = (x * TILESIZE,y * TILESIZE)
+        surface.blit(text_surface, text_rect)
 
     #draws the acutal grid & backg
     def draw(self):
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen)
+        self.draw_text(self.screen, str(self.player.moneybags), 48, WHITE, 1, 1)
         pg.display.flip()
 
     #events, and checks if we clicked 'X'
@@ -117,16 +132,6 @@ class Game:
             if event.type == pg.QUIT:
                 self.quit()
                 print("GAME HAS ENDED")
-            #input & movement based on key input
-            # if event.type == pg.KEYDOWN:
-            #     if event.key == pg.K_LEFT:
-            #         self.player.move(dx = -1)
-            #     elif event.key == pg.K_RIGHT:
-            #         self.player.move(dx = 1)
-            #     elif event.key == pg.K_UP:
-            #         self.player.move(dy = -1)
-            #     elif event.key == pg.K_DOWN:
-            #         self.player.move(dy = 1)
 
     def show_start_screen(self):
         pass
@@ -138,6 +143,6 @@ class Game:
 g = Game()
 # g.show_go_screen()
 while True:
-    g.new()
+    g.new() 
     g.run()
     # go.show_go_screen()
