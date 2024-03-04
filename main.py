@@ -9,6 +9,12 @@ import sys
 from os import path
 from random import randint
 
+"""
+Enemy Collision (With Walls)
+Randomized Maps 
+More Enemies
+"""
+
 ######################Create Game Class#######################
 
 class Game:
@@ -75,8 +81,8 @@ class Game:
                     print("coin at", row, col)
                     Coin(self, col, row)
                 #spawn enemy
-                if tile == 'e':
-                    Enemy(self, col, row)
+                if tile == 'g':
+                    Ghost(self, col, row)
 
     #Run methods, causes the game to work.
     def run(self):

@@ -151,7 +151,7 @@ class Coin(pg.sprite.Sprite):
         self.rect.y = y * TILESIZE
         
 
-class Enemy(pg.sprite.Sprite):
+class Ghost(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.enemy
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -171,9 +171,9 @@ class Enemy(pg.sprite.Sprite):
         distance_y = self.game.player.y - self.rect.y
         distance = (distance_x ** 2 + distance_y ** 2) ** 0.5
 
-        if distance >= 300:
+        if distance >= 350:
             self.speed = 0
-        elif distance <= 300:
+        elif distance <= 200:
             self.speed = 7
 
         #make enemy "chase" player
@@ -181,28 +181,5 @@ class Enemy(pg.sprite.Sprite):
             self.rect.x += self.speed * distance_x / distance
             self.rect.y += self.speed * distance_y / distance
 
-
-    # def collide_with_walls(self, dir):
-    #     if dir == 'x':
-    #         hits = pg.sprite.spritecollide(self, self.game.walls, False)
-    #         if hits:
-    #             if self.rect.x > 0:
-    #                 self.x = hits[0].rect.left - self.rect.width
-    #             if self.rect.x < 0:
-    #                 self.x = hits[0].rect.right
-    #             self.rect.x = 0
-    #             self.rect.x = self.x   
-    #     if dir == 'y':
-    #         hits = pg.sprite.spritecollide(self, self.game.walls, False)
-    #         if hits:
-    #             if self.rect.y > 0:
-    #                 self.y = hits[0].rect.top - self.rect.height
-    #             if self.rect.y < 0:
-    #                 self.y = hits[0].rect.bottom
-    #             self.rect.y = 0
-    #             self.rect.y = self.y
-        
     def update(self):
         self.move()
-        # self.collide_with_walls('x')
-        # self.collide_with_walls('y')
