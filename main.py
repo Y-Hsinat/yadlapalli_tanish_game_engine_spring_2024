@@ -7,12 +7,13 @@ from settings import *
 from sprites import *
 import sys
 from os import path
+import os
 from random import randint
 
 """
 Enemy Collision (With Walls)
 Randomized Maps 
-More Enemies
+More Enemies (Types of enemies)
 """
 
 ######################Create Game Class#######################
@@ -38,15 +39,18 @@ class Game:
     def load_data(self):
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, 'images')
-        self.player_img = pg.image.load(path.join(img_folder, 'thing.png')).convert_alpha()
+        map_folder = path.join(game_folder, 'maps')
         self.map_data = []
+        self.player_img = pg.image.load(path.join(img_folder, 'thing.png')).convert_alpha()
+        self.map = str(random.choice(os.listdir("maps")))
+        
         '''
         The with statement is a context manager in Python. 
         It is used to ensure that a resource is properly closed or released 
         after it is used. This can help to prevent errors and leaks.
         '''
         #create map from file
-        with open(path.join(game_folder, 'map.txt'), 'rt') as f:
+        with open(path.join(game_folder, map_folder, self.map), 'rt') as f:
             for line in f:
                 print(line)
                 self.map_data.append(line)
