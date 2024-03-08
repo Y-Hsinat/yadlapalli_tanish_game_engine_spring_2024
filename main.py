@@ -6,12 +6,12 @@ import pygame as pg
 from settings import *
 from sprites import *
 import sys
-from os import path
 import os
+from os import path
 from random import randint
 
 """
-Enemy Collision (With Walls)
+Get more graphics.
 Randomized Maps 
 More Enemies (Types of enemies)
 """
@@ -32,7 +32,7 @@ class Game:
         #Set Running & Playing to True
         pg.key.set_repeat(500, 100)
         self.running = True
-        #load data into and from, game
+    #load data into and from, game
         self.load_data()
 
     #load data method
@@ -42,18 +42,31 @@ class Game:
         map_folder = path.join(game_folder, 'maps')
         self.map_data = []
         self.player_img = pg.image.load(path.join(img_folder, 'thing.png')).convert_alpha()
+        self.wallBD_img = pg.image.load(path.join(img_folder, 'Border_Down.png')).convert_alpha()
+        self.wallBU_img = pg.image.load(path.join(img_folder, 'Border_Up.png')).convert_alpha()
+        self.wallBL_img = pg.image.load(path.join(img_folder, 'Border_Left.png')).convert_alpha()
+        self.wallBR_img = pg.image.load(path.join(img_folder, 'Border_Right.png')).convert_alpha()
+        self.wall_img = pg.image.load(path.join(img_folder, 'Wall.png')).convert_alpha()
+        self.coin_img = pg.image.load(path.join(img_folder, 'Coin.png')).convert_alpha()
+        self.ghost_img = pg.image.load(path.join(img_folder, 'Ghost.png')).convert_alpha()
+        self.shrink_img = pg.image.load(path.join(img_folder, 'Shrink.png')).convert_alpha()
+        self.grow_img = pg.image.load(path.join(img_folder, 'Grow.png')).convert_alpha()
         self.map = str(random.choice(os.listdir("maps")))
-        
+
         '''
         The with statement is a context manager in Python. 
         It is used to ensure that a resource is properly closed or released 
         after it is used. This can help to prevent errors and leaks.
         '''
+
         #create map from file
         with open(path.join(game_folder, map_folder, self.map), 'rt') as f:
             for line in f:
                 print(line)
                 self.map_data.append(line)
+        #get white part of image to be transparent
+  
+
                 
     #create everything, add player to 'all_sprites'
     def new(self):
@@ -71,6 +84,18 @@ class Game:
                 if tile == '#':
                     print("a wall at", row, col)
                     Wall(self, col, row)
+                #down border wall
+                if tile == "d":
+                    DownW(self, col, row)
+                #right border wall
+                if tile == "r":
+                    RightW(self, col, row)
+                #left border wall
+                if tile == "l":
+                    LeftW(self, col, row)
+                #up border wall
+                if tile == "u":
+                    UpW(self, col, row)
                 #spawn "Player"
                 if tile == 'p':
                     self.player = Player(self, col, row)
