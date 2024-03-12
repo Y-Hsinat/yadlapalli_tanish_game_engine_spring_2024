@@ -66,6 +66,7 @@ class Player(pg.sprite.Sprite):
                 #increase speed, or set back to original
                 self.speed = self.speed * 1.667
 
+
     #gets all key inputs
     def get_keys(self):
         self.vx, self.vy = 0, 0
@@ -195,7 +196,7 @@ class Coin(pg.sprite.Sprite):
 
 class Ghost(pg.sprite.Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.enemy
+        self.groups = game.all_sprites, game.ghost
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.ghost_img
@@ -208,19 +209,24 @@ class Ghost(pg.sprite.Sprite):
         
     def move(self):
         #pythag formula for making enemy
-        distance_x = self.game.player.x - self.rect.x
-        distance_y = self.game.player.y - self.rect.y
-        distance = (distance_x ** 2 + distance_y ** 2) ** 0.5
+        self.distance_x = self.game.player.x - self.rect.x
+        self.distance_y = self.game.player.y - self.rect.y
+        self.distance = (self.distance_x ** 2 + self.distance_y ** 2) ** 0.5
 
-        if distance >= 350:
+        #make stop chasing
+        if self.distance >= 250:
             self.speed = 0
-        elif distance <= 200:
+        elif self.distance <= 200:
             self.speed = 7
 
         #make enemy "chase" player
-        if distance != 0:
-            self.rect.x += self.speed * distance_x / distance
-            self.rect.y += self.speed * distance_y / distance
+        if self.distance != 0:
+            self.rect.x += self.speed * self.distance_x / self.distance
+            self.rect.y += self.speed * self.distance_y / self.distance
 
+    def collide_with_player(self):
+        if self.game.player.x == self.x and self.game.player.y == self.y:
+            self.game.quit()
+            
     def update(self):
         self.move()

@@ -13,7 +13,7 @@ from random import randint
 """
 Get more graphics.
 Randomized Maps 
-More Enemies (Types of enemies)
+Get Border (sprites facing the right way, facing inward)
 """
 
 ######################Create Game Class#######################
@@ -52,7 +52,6 @@ class Game:
         self.shrink_img = pg.image.load(path.join(img_folder, 'Shrink.png')).convert_alpha()
         self.grow_img = pg.image.load(path.join(img_folder, 'Grow.png')).convert_alpha()
         self.map = str(random.choice(os.listdir("maps")))
-
         '''
         The with statement is a context manager in Python. 
         It is used to ensure that a resource is properly closed or released 
@@ -75,7 +74,7 @@ class Game:
         self.grow = pg.sprite.Group()
         self.shrink = pg.sprite.Group()
         self.coins = pg.sprite.Group()
-        self.enemy = pg.sprite.Group()
+        self.ghost = pg.sprite.Group()
         for row, tiles in enumerate(self.map_data):
             print(row)
             for col, tile in enumerate(tiles):
@@ -112,6 +111,9 @@ class Game:
                 #spawn enemy
                 if tile == 'g':
                     Ghost(self, col, row)
+                #spawn pathfinding ;gost;
+                if tile == ';':
+                    pass
 
     #Run methods, causes the game to work.
     def run(self):
