@@ -70,7 +70,7 @@ class Player(pg.sprite.Sprite):
             #collide with enemy, die.
             if str(hits[0].__class__.__name__) == "Ghost":
                 print("hit check")
-                self.hitpoints -= 10
+                self.hitpoints -= 1
 
 
     #gets all key inputs
@@ -211,7 +211,7 @@ class Ghost(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
-        self.speed = 7
+        self.speed = 8
         
     def move(self):
         #pythag formula for making enemy
@@ -220,10 +220,10 @@ class Ghost(pg.sprite.Sprite):
         self.distance = (self.distance_x ** 2 + self.distance_y ** 2) ** 0.5
 
         #make stop chasing
-        if self.distance >= 250:
+        if self.distance >= 250 or self.distance <= 5:
             self.speed = 0
         elif self.distance <= 200:
-            self.speed = 7
+            self.speed = 8
 
         #make enemy "chase" player
         if self.distance != 0:
