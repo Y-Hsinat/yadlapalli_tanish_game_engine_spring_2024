@@ -16,6 +16,21 @@ Randomized Maps
 Get Border (sprites facing the right way, facing inward)
 """
 
+#draws health bar above player
+def draw_health_bar(surf, x, y, pct):
+    if pct < 0:
+        pct = 0
+    #length of bar, visual representation of health
+    BAR_LENGTH = 32
+    BAR_HEIGHT = 10
+    fill = (pct / 100) * BAR_LENGTH
+    #white outline
+    outline_rect = pg.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
+    fill_rect = pg.Rect(x, y, fill, BAR_HEIGHT)
+    #actually draws the health bar and stuff.
+    pg.draw.rect(surf, GREEN, fill_rect)
+    pg.draw.rect(surf, WHITE, outline_rect, 2)
+
 ######################Create Game Class#######################
 
 class Game:
@@ -75,6 +90,7 @@ class Game:
         self.shrink = pg.sprite.Group()
         self.coins = pg.sprite.Group()
         self.ghost = pg.sprite.Group()
+        self.gost = pg.sprite.Group()
         for row, tiles in enumerate(self.map_data):
             print(row)
             for col, tile in enumerate(tiles):
@@ -113,7 +129,7 @@ class Game:
                     Ghost(self, col, row)
                 #spawn pathfinding ;gost;
                 if tile == ';':
-                    pass
+                    Gost(self, col, row)
 
     #Run methods, causes the game to work.
     def run(self):
@@ -160,6 +176,7 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, str(self.player.moneybags), 48, WHITE, 1, 1)
+        draw_health_bar(self.screen, self.player.rect.x, self.player.rect.y - 15, self.player.hitpoints)
         pg.display.flip()
 
     #events, and checks if we clicked 'X'

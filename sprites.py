@@ -17,6 +17,7 @@ class Player(pg.sprite.Sprite):
         self.speed = PLAYER_SPEED
         self.x = x * TILESIZE
         self.y = y * TILESIZE
+        self.hitpoints = 100
         self.moneybags = 0
 
     def collide_with_walls(self, dir):
@@ -65,6 +66,11 @@ class Player(pg.sprite.Sprite):
                 self.rect.height = self.rect.height / 2
                 #increase speed, or set back to original
                 self.speed = self.speed * 1.667
+            
+            #collide with enemy, die.
+            if str(hits[0].__class__.__name__) == "Ghost":
+                print("hit check")
+                self.hitpoints -= 10
 
 
     #gets all key inputs
@@ -227,6 +233,53 @@ class Ghost(pg.sprite.Sprite):
     def collide_with_player(self):
         if self.game.player.x == self.x and self.game.player.y == self.y:
             self.game.quit()
-            
+
     def update(self):
         self.move()
+
+class Gost(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.gost
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = game.ghost_img
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+        self.angle = 0
+        self.speed = 7
+        #create all the lines we want to draw
+        self.lines = [((self.rect.x, self.rect.y), (20 + self.angle, 20 + self.angle)), ((self.rect.x, self.rect.y),(20 - self.angle, 20 - self.angle))]
+
+
+    def draw_rays(self):
+        #do something like self.game.player.x - 15 to, get the distance like 10 times, etc.
+        self.distance_x = self.game.player.x - self.rect.x
+        self.distance_y = self.game.player.y - self.rect.y
+        self.distance = (self.distance_x ** 2 + self.distance_y ** 2) ** 0.5
+
+        #draw lines (rays)
+        # while self.lines != 75:
+        for line in self.lines:
+            pg.draw.line(self.game.screen, "white", *line, width = 5)
+            self.angle + 15
+        pg.display.flip()
+
+    def move(self):
+        #make stop if exceed certain value
+        if self.distance <= 150:
+            self.speed = 0
+        elif self.distance >= 150:
+            self.speed = 7
+
+        #make chase player
+        if self.distance != 0:
+            self.rect.x += self.speed * self.distance_x / self.distance
+            self.rect.y += self.speed * self.distance_y / self.distance
+
+    def update(self):
+        self.draw_rays()
+
+            
