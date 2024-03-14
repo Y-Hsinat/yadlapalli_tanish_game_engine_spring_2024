@@ -69,8 +69,7 @@ class Player(pg.sprite.Sprite):
             
             #collide with enemy, die.
             if str(hits[0].__class__.__name__) == "Ghost":
-                print("hit check")
-                self.hitpoints -= 1
+                self.hitpoints -= 10
 
 
     #gets all key inputs
@@ -98,6 +97,7 @@ class Player(pg.sprite.Sprite):
         self.collide_with_group(self.game.grow, True)
         self.collide_with_group(self.game.shrink, True)
         self.collide_with_group(self.game.coins, True)
+        self.collide_with_group(self.game.ghost, False)
 
 #write a wall class
 class Wall(pg.sprite.Sprite):
@@ -250,8 +250,11 @@ class Gost(pg.sprite.Sprite):
         self.rect.y = y * TILESIZE
         self.angle = 0
         self.speed = 7
+        self.playerx = game.player.x
+        self.playery = game.player.y
         #create all the lines we want to draw
-        self.lines = [((self.rect.x, self.rect.y), (20 + self.angle, 20 + self.angle)), ((self.rect.x, self.rect.y),(20 - self.angle, 20 - self.angle))]
+        self.lines = [((self.rect.x, self.rect.y), (self.playerx, self.playery))]
+        #[((self.rect.x, self.rect.y), (20 + self.angle, 20 + self.angle)), ((self.rect.x, self.rect.y),(20 - self.angle, 20 - self.angle))]
 
 
     def draw_rays(self):
@@ -263,21 +266,9 @@ class Gost(pg.sprite.Sprite):
         #draw lines (rays)
         # while self.lines != 75:
         for line in self.lines:
-            pg.draw.line(self.game.screen, "white", *line, width = 5)
+            pg.draw.line(self.game.screen, "white", *line, width = 3)
             self.angle + 15
         pg.display.flip()
-
-    def move(self):
-        #make stop if exceed certain value
-        if self.distance <= 150:
-            self.speed = 0
-        elif self.distance >= 150:
-            self.speed = 7
-
-        #make chase player
-        if self.distance != 0:
-            self.rect.x += self.speed * self.distance_x / self.distance
-            self.rect.y += self.speed * self.distance_y / self.distance
 
     def update(self):
         self.draw_rays()
