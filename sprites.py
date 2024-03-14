@@ -250,27 +250,28 @@ class Gost(pg.sprite.Sprite):
         self.rect.y = y * TILESIZE
         self.angle = 0
         self.speed = 7
-        self.playerx = game.player.x
-        self.playery = game.player.y
-        #create all the lines we want to draw
-        self.lines = [((self.rect.x, self.rect.y), (self.playerx, self.playery))]
+        # self.playerx = game.player.x
+        # self.playery = game.player.y
+        # #create all the lines we want to draw
+        # self.lines = [((self.rect.x, self.rect.y), (self.playerx, self.playery))]
         #[((self.rect.x, self.rect.y), (20 + self.angle, 20 + self.angle)), ((self.rect.x, self.rect.y),(20 - self.angle, 20 - self.angle))]
 
 
-    def draw_rays(self):
-        #do something like self.game.player.x - 15 to, get the distance like 10 times, etc.
-        self.distance_x = self.game.player.x - self.rect.x
-        self.distance_y = self.game.player.y - self.rect.y
-        self.distance = (self.distance_x ** 2 + self.distance_y ** 2) ** 0.5
+    # def draw_rays(self):
+    #     #do something like self.game.player.x - 15 to, get the distance like 10 times, etc.
+    #     self.distance_x = self.game.player.x - self.rect.x
+    #     self.distance_y = self.game.player.y - self.rect.y
+    #     self.distance = (self.distance_x ** 2 + self.distance_y ** 2) ** 0.5
 
-        #draw lines (rays)
-        # while self.lines != 75:
-        for line in self.lines:
-            pg.draw.line(self.game.screen, "white", *line, width = 3)
-            self.angle + 15
-        pg.display.flip()
+    #     #draw lines (rays)
+    #     # while self.lines != 75:
+    #     for line in self.lines:
+    #         pg.draw.line(self.game.screen, "white", *line, width = 3)
+    #         self.angle + 15
+    #     pg.display.flip()
 
     def update(self):
-        self.draw_rays()
+        pass
+        # self.draw_rays()
 
             
