@@ -16,6 +16,7 @@ from os import path
 from random import randint
 
 """
+Goals:
 Get more graphics.
 Randomized Maps 
 Get Border (sprites facing the right way, facing inward)
@@ -61,6 +62,7 @@ class Game:
         img_folder = path.join(game_folder, 'images')
         map_folder = path.join(game_folder, 'maps')
         self.map_data = []
+        self.map = str(random.choice(os.listdir("maps")))
         self.player_img = pg.image.load(path.join(img_folder, 'thing.png')).convert_alpha()
         self.wallBD_img = pg.image.load(path.join(img_folder, 'Border_Down.png')).convert_alpha()
         self.wallBU_img = pg.image.load(path.join(img_folder, 'Border_Up.png')).convert_alpha()
@@ -71,7 +73,6 @@ class Game:
         self.ghost_img = pg.image.load(path.join(img_folder, 'Ghost.png')).convert_alpha()
         self.shrink_img = pg.image.load(path.join(img_folder, 'Shrink.png')).convert_alpha()
         self.grow_img = pg.image.load(path.join(img_folder, 'Grow.png')).convert_alpha()
-        self.map = str(random.choice(os.listdir("maps")))
         '''
         The with statement is a context manager in Python. 
         It is used to ensure that a resource is properly closed or released 

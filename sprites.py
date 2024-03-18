@@ -229,7 +229,7 @@ class Ghost(pg.sprite.Sprite):
         if self.distance != 0:
             self.rect.x += self.speed * self.distance_x / self.distance
             self.rect.y += self.speed * self.distance_y / self.distance
-    
+
     def collide_with_player(self):
         if self.game.player.x == self.x and self.game.player.y == self.y:
             self.game.quit()
@@ -237,7 +237,7 @@ class Ghost(pg.sprite.Sprite):
     def update(self):
         self.move()
 
-#enemy type, pathfinding -- test
+#enemy type, pathfinding -- test (experimental)
 class Gost(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.gost
