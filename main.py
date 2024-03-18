@@ -1,5 +1,10 @@
 # This file was created by: Tanish Yadlapalli
 
+# Sources/Credits:
+# Mr. Cozort's Repository: https://github.com/ccozort/cozort_chris_game_engine_Spring_2024
+# Makeuseof's Pygame Player-Following Algorithm: https://www.makeuseof.com/pygame-move-enemies-different-ways/#:~:text=To%20move%20the%20enemy%20toward,and%20direction%20toward%20the%20player.
+# Pygame Documentation: https://www.pygame.org/docs/ref/draw.html 
+
 ##################Import Libraries and Files##################
 
 import pygame as pg
