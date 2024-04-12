@@ -2,6 +2,14 @@
 import pygame as pg
 import random
 from settings import *
+from utils import *
+import os
+from os import path
+import sys
+
+
+game_folder = path.dirname(__file__)
+img_folder = path.join(game_folder, 'images')
 
 # write a player class
 class Player(pg.sprite.Sprite):
@@ -9,9 +17,9 @@ class Player(pg.sprite.Sprite):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        # self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image = game.player_img
-        # self.image.fill((GREEN))
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.spritesheet = Spritesheet(path.join(img_folder, 'Spritesheet.png'))
+        self.load_images()
         self.rect = self.image.get_rect()
         self.vx, self.vy = 0, 0
         self.speed = PLAYER_SPEED
@@ -19,6 +27,22 @@ class Player(pg.sprite.Sprite):
         self.y = y * TILESIZE
         self.hitpoints = 100
         self.moneybags = 0
+        self.current_frame = 0
+        self.last_update = 0
+
+    def load_images(self):
+        self.standing_frames = [self.spritesheet.get_image(0, 0, 32, 32),
+                                self.spritesheet.get_image(32, 0, 32, 32)]
+        
+    def animate(self):
+        now = pg.time.get_ticks()
+        if now - self.last_update > 350:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.standing_frames)
+            bottom = self.rect.bottom
+            self.image = self.standing_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
 
     def collide_with_walls(self, dir):
         if dir == 'x':
@@ -70,24 +94,26 @@ class Player(pg.sprite.Sprite):
             #collide with enemy, die.
             if str(hits[0].__class__.__name__) == "Ghost":
                 self.hitpoints -= 10
-
+                if self.hitpoints == 0:
+                    sys.exit()
 
     #gets all key inputs
     def get_keys(self):
         self.vx, self.vy = 0, 0
         keys = pg.key.get_pressed()
-        if keys[pg.K_LEFT] or keys[pg.K_a]:
+        if keys[pg.K_LEFT] or keys[pg.K_e]:
             self.vx = -self.speed #PLAYER SPEED
-        if keys[pg.K_RIGHT] or keys[pg.K_d]:
+        if keys[pg.K_RIGHT] or keys[pg.K_f]:
             self.vx = self.speed #PLAYER SPEED
-        if keys[pg.K_UP] or keys[pg.K_w]:
+        if keys[pg.K_UP] or keys[pg.K_r]:
             self.vy = -self.speed #PLAYER SPEED
-        if keys[pg.K_DOWN] or keys[pg.K_s]:
+        if keys[pg.K_DOWN] or keys[pg.K_d]:
             self.vy = self.speed #PLAYER SPEED
 
     #updated update (new update)
     def update(self):
         self.get_keys()
+        self.animate()
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
         self.rect.x = self.x

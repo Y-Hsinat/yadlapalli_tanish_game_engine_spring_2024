@@ -9,6 +9,7 @@
 
 import pygame as pg
 from settings import *
+from utils import *
 from sprites import *
 import sys
 import os
@@ -84,7 +85,6 @@ class Game:
             for line in f:
                 print(line)
                 self.map_data.append(line)
-        #get white part of image to be transparent
   
 
                 
