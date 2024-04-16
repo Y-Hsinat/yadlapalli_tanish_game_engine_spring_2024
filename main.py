@@ -21,6 +21,10 @@ Goals:
 Get more graphics.
 Randomized Maps 
 Get Border (sprites facing the right way, facing inward)
+
+BETA Goals:
+Gameplay goal: Add more puzzle-based powerups (like something that allows you to move blocks, etc.)
+Secondary Goals: repurpose ghost into static 'spike,' get small and enlarge powerup working.
 """
 
 #draws health bar above player
