@@ -72,6 +72,7 @@ class Player(pg.sprite.Sprite):
             if str(hits[0].__class__.__name__) == "Coin":
                 #increase coin count
                 self.moneybags += 1
+                print(self.moneybags)
             
             #check for hit with Grow
             if str(hits[0].__class__.__name__) == "Grow":

@@ -61,14 +61,16 @@ class Game:
         self.running = True
     #load data into and from, game
         self.load_data()
+        #map, current map
 
     #load data method
     def load_data(self):
-        game_folder = path.dirname(__file__)
-        img_folder = path.join(game_folder, 'images')
-        map_folder = path.join(game_folder, 'maps')
+        self.game_folder = path.dirname(__file__)
+        self.img_folder = path.join(game_folder, 'images')
+        self.map_folder = path.join(game_folder, 'maps')
         self.map_data = []
-        self.map = str(os.listdir(map_folder)[2])
+        self.current_map = 0
+        self.map = str(os.listdir(self.map_folder)[self.current_map])
         self.player_img = pg.image.load(path.join(img_folder, 'thing.png')).convert_alpha()
         self.wallBD_img = pg.image.load(path.join(img_folder, 'Border_Down.png')).convert_alpha()
         self.wallBU_img = pg.image.load(path.join(img_folder, 'Border_Up.png')).convert_alpha()
@@ -86,7 +88,7 @@ class Game:
         '''
 
         #create map from file
-        with open(path.join(game_folder, map_folder, self.map), 'rt') as f:
+        with open(path.join(self.game_folder, self.map_folder, self.map), 'rt') as f:
             for line in f:
                 print(line)
                 self.map_data.append(line)
@@ -164,6 +166,10 @@ class Game:
     #updates all sprites
     def update(self):
         self.all_sprites.update()
+        if self.player.moneybags == 9:
+            self.current_map += 1
+            self.map = str(os.listdir(self.map_folder)[self.current_map])
+            self.change_level(self.map)
 
     #draws the grid over screen
     def draw_grid(self):
@@ -196,6 +202,59 @@ class Game:
             if event.type == pg.QUIT:
                 self.quit()
                 print("GAME HAS ENDED")
+    
+    def change_level(self, lvl):
+        # kill all sprites onscreen
+        for s in self.all_sprites:
+            s.kill()
+        # reset player coin count (objective)
+        self.player.moneybag = 0
+        # reset map data
+        self.map_data = []
+        # create next level
+        with open(path.join(self.game_folder, self.map_folder, lvl)) as f:
+            for line in f:
+                print(line)
+                self.map_data.append(line)
+        for row, tiles in enumerate(lvl):
+            print(row)
+            for col, tile in enumerate(tiles):
+                print(col)
+                #create walls if tile is one
+                if tile == '#':
+                    print("a wall at", row, col)
+                    Wall(self, col, row)
+                #down border wall
+                if tile == "d":
+                    DownW(self, col, row)
+                #right border wall
+                if tile == "r":
+                    RightW(self, col, row)
+                #left border wall
+                if tile == "l":
+                    LeftW(self, col, row)
+                #up border wall
+                if tile == "u":
+                    UpW(self, col, row)
+                #spawn "Player"
+                if tile == 'p':
+                    self.player = Player(self, col, row)
+                #spawn grow
+                if tile == '>':
+                    Grow(self, col, row)
+                #spawn shrink
+                if tile == '<':
+                    Shrink(self, col, row)
+                #spawn coin
+                if tile == 'c':
+                    print("coin at", row, col)
+                    Coin(self, col, row)
+                #spawn enemy
+                if tile == 'g':
+                    Ghost(self, col, row)
+                #spawn pathfinding ;gost;
+                if tile == ';':
+                    Gost(self, col, row)
 
     def show_start_screen(self):
         pass
