@@ -23,7 +23,8 @@ Randomized Maps
 Get Border (sprites facing the right way, facing inward)
 
 BETA Goals:
-Gameplay goal: Add more puzzle-based powerups (like something that allows you to move blocks, etc.)
+Gameplay goal: Changing Levels
+(Maybe) Add more puzzle-based powerups (like something that allows you to move blocks, etc.)
 Secondary Goals: repurpose ghost into static 'spike,' get small and enlarge powerup working.
 """
 
@@ -32,8 +33,8 @@ def draw_health_bar(surf, x, y, pct):
     if pct < 0:
         pct = 0
     #length of bar, visual representation of health
-    BAR_LENGTH = 32
-    BAR_HEIGHT = 10
+    BAR_LENGTH = 250
+    BAR_HEIGHT = 35
     fill = (pct / 100) * BAR_LENGTH
     #white outline
     outline_rect = pg.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
@@ -67,7 +68,7 @@ class Game:
         img_folder = path.join(game_folder, 'images')
         map_folder = path.join(game_folder, 'maps')
         self.map_data = []
-        self.map = str(random.choice(os.listdir("maps")))
+        self.map = str(os.listdir(map_folder)[2])
         self.player_img = pg.image.load(path.join(img_folder, 'thing.png')).convert_alpha()
         self.wallBD_img = pg.image.load(path.join(img_folder, 'Border_Down.png')).convert_alpha()
         self.wallBU_img = pg.image.load(path.join(img_folder, 'Border_Up.png')).convert_alpha()
@@ -185,8 +186,7 @@ class Game:
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen)
-        self.draw_text(self.screen, str(self.player.moneybags), 48, WHITE, 1, 1)
-        draw_health_bar(self.screen, self.player.rect.x, self.player.rect.y - 15, self.player.hitpoints)
+        draw_health_bar(self.screen, 27, 10, self.player.hitpoints)
         pg.display.flip()
 
     #events, and checks if we clicked 'X'

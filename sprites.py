@@ -237,7 +237,7 @@ class Ghost(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
-        self.speed = 8
+        self.speed = 4
         
     def move(self):
         #pythag formula for making enemy
@@ -249,7 +249,7 @@ class Ghost(pg.sprite.Sprite):
         if self.distance >= 250 or self.distance <= 5:
             self.speed = 0
         elif self.distance <= 200:
-            self.speed = 8
+            self.speed = 4
 
         #make enemy "chase" player
         if self.distance != 0:
@@ -275,11 +275,5 @@ class Gost(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
-        self.angle = 0
-        self.speed = 7        
-
-    def update(self):
-        pass
-        # self.draw_rays()
 
             
