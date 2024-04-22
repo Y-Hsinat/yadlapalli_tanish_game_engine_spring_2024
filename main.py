@@ -170,6 +170,7 @@ class Game:
             self.current_map += 1
             self.map = str(os.listdir(self.map_folder)[self.current_map])
             self.change_level(self.map)
+            
 
     #draws the grid over screen
     def draw_grid(self):
@@ -204,18 +205,59 @@ class Game:
                 print("GAME HAS ENDED")
     
     def change_level(self, lvl):
-        # kill all sprites onscreen
+        self.game_folder = path.dirname(__file__)
+        self.map_folder = path.join(game_folder, 'maps')
+        #remove everything from screen
         for s in self.all_sprites:
             s.kill()
-        # reset player coin count (objective)
+        # make sure that money is 0; levels work
         self.player.moneybag = 0
-        # reset map data
+        # set self.map data to 0
         self.map_data = []
-        # create next level
-        with open(path.join(self.game_folder, self.map_folder, lvl)) as f:
+        with open(path.join(self.game_folder, self.map_folder, lvl), 'rt') as f:
             for line in f:
                 print(line)
                 self.map_data.append(line)
+        # put things on screen
+        for row, tiles in enumerate(self.map_data):
+            print(row)
+            for col, tile in enumerate(tiles):
+                print(col)
+                if tile == '#':
+                    print("a wall at", row, col)
+                    Wall(self, col, row)
+                #down border wall
+                if tile == "d":
+                    DownW(self, col, row)
+                #right border wall
+                if tile == "r":
+                    RightW(self, col, row)
+                #left border wall
+                if tile == "l":
+                    LeftW(self, col, row)
+                #up border wall
+                if tile == "u":
+                    UpW(self, col, row)
+                #spawn "Player"
+                if tile == 'p':
+                    self.player = Player(self, col, row)
+                #spawn grow
+                if tile == '>':
+                    Grow(self, col, row)
+                #spawn shrink
+                if tile == '<':
+                    Shrink(self, col, row)
+                #spawn coin
+                if tile == 'c':
+                    print("coin at", row, col)
+                    Coin(self, col, row)
+                #spawn enemy
+                if tile == 'g':
+                    Ghost(self, col, row)
+                #spawn pathfinding ;gost;
+                if tile == ';':
+                    Gost(self, col, row)
+
         for row, tiles in enumerate(lvl):
             print(row)
             for col, tile in enumerate(tiles):
