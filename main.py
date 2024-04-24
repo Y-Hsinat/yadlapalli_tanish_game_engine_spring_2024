@@ -81,6 +81,8 @@ class Game:
         self.ghost_img = pg.image.load(path.join(img_folder, 'Ghost.png')).convert_alpha()
         self.shrink_img = pg.image.load(path.join(img_folder, 'Shrink.png')).convert_alpha()
         self.grow_img = pg.image.load(path.join(img_folder, 'Grow.png')).convert_alpha()
+        self.gost_img = pg.image.load(path.join(img_folder, 'gost.png')).convert_alpha()
+        self.movable_img = pg.image.load(path.join(img_folder, 'Movable.png')).convert_alpha()
         '''
         The with statement is a context manager in Python. 
         It is used to ensure that a resource is properly closed or released 
@@ -104,6 +106,7 @@ class Game:
         self.coins = pg.sprite.Group()
         self.ghost = pg.sprite.Group()
         self.gost = pg.sprite.Group()
+        self.movable = pg.sprite.Group()
         for row, tiles in enumerate(self.map_data):
             print(row)
             for col, tile in enumerate(tiles):
@@ -143,6 +146,8 @@ class Game:
                 #spawn pathfinding ;gost;
                 if tile == ';':
                     Gost(self, col, row)
+                if tile == '%':
+                    Movable(self, col, row)
 
     #Run methods, causes the game to work.
     def run(self):
@@ -171,14 +176,6 @@ class Game:
             self.map = str(os.listdir(self.map_folder)[self.current_map])
             self.change_level(self.map)
             
-
-    #draws the grid over screen
-    def draw_grid(self):
-        for x in range(0, WIDTH, TILESIZE):
-            pg.draw.line(self.screen, LIGHTGREY, (x, 0,), (x, HEIGHT))
-        for y in range(0, HEIGHT, TILESIZE): 
-            pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
-            
     #draw text to the screen
     def draw_text(self, surface, text, size, color, x, y):
         font_name = pg.font.match_font('Consolas')
@@ -190,8 +187,7 @@ class Game:
 
     #draws the acutal grid & backg
     def draw(self):
-        self.screen.fill(BGCOLOR)
-        self.draw_grid()
+        self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
         draw_health_bar(self.screen, 27, 10, self.player.hitpoints)
         pg.display.flip()
@@ -223,46 +219,6 @@ class Game:
             print(row)
             for col, tile in enumerate(tiles):
                 print(col)
-                if tile == '#':
-                    print("a wall at", row, col)
-                    Wall(self, col, row)
-                #down border wall
-                if tile == "d":
-                    DownW(self, col, row)
-                #right border wall
-                if tile == "r":
-                    RightW(self, col, row)
-                #left border wall
-                if tile == "l":
-                    LeftW(self, col, row)
-                #up border wall
-                if tile == "u":
-                    UpW(self, col, row)
-                #spawn "Player"
-                if tile == 'p':
-                    self.player = Player(self, col, row)
-                #spawn grow
-                if tile == '>':
-                    Grow(self, col, row)
-                #spawn shrink
-                if tile == '<':
-                    Shrink(self, col, row)
-                #spawn coin
-                if tile == 'c':
-                    print("coin at", row, col)
-                    Coin(self, col, row)
-                #spawn enemy
-                if tile == 'g':
-                    Ghost(self, col, row)
-                #spawn pathfinding ;gost;
-                if tile == ';':
-                    Gost(self, col, row)
-
-        for row, tiles in enumerate(lvl):
-            print(row)
-            for col, tile in enumerate(tiles):
-                print(col)
-                #create walls if tile is one
                 if tile == '#':
                     print("a wall at", row, col)
                     Wall(self, col, row)

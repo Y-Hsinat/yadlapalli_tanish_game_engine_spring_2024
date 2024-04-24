@@ -64,6 +64,24 @@ class Player(pg.sprite.Sprite):
                 self.vy = 0
                 self.rect.y = self.y
 
+    def collide_with_movable(self, dir):
+        hits = pg.sprite.spritecollide(self, self.game.movable, False)
+        for hit in hits:
+            if dir == 'x':
+                if self.vx > 0:  # Moving right
+                    while pg.sprite.spritecollide(self, self.game.movable, False):
+                        hit.rect.left += 1
+                elif self.vx < 0:  # Moving left
+                    while pg.sprite.spritecollide(self, self.game.movable, False):
+                        hit.rect.right -= 1
+            elif dir == 'y':
+                if self.vy > 0:  # Moving down
+                    while pg.sprite.spritecollide(self, self.game.movable, False):
+                        hit.rect.top += 1
+                elif self.vy < 0:  # Moving up
+                    while pg.sprite.spritecollide(self, self.game.movable, False):
+                        hit.rect.bottom -= 1
+
     #collide with any group
     def collide_with_group(self, group, kill):
         hits = pg.sprite.spritecollide(self, group, kill)
@@ -72,7 +90,6 @@ class Player(pg.sprite.Sprite):
             if str(hits[0].__class__.__name__) == "Coin":
                 #increase coin count
                 self.moneybags += 1
-                print(self.moneybags)
             
             #check for hit with Grow
             if str(hits[0].__class__.__name__) == "Grow":
@@ -97,6 +114,11 @@ class Player(pg.sprite.Sprite):
                 self.hitpoints -= 10
                 if self.hitpoints == 0:
                     sys.exit()
+            #collide with spike, die
+            if str(hits[0].__class__.__name__) == "Gost":
+                self.hitpoints -= 2.5
+                if self.hitpoints == 0:
+                    sys.exit()
 
     #gets all key inputs
     def get_keys(self):
@@ -110,6 +132,8 @@ class Player(pg.sprite.Sprite):
             self.vy = -self.speed #PLAYER SPEED
         if keys[pg.K_DOWN] or keys[pg.K_d]:
             self.vy = self.speed #PLAYER SPEED
+        if keys[pg.K_v]:
+            self.game.change_level()
 
     #updated update (new update)
     def update(self):
@@ -118,13 +142,16 @@ class Player(pg.sprite.Sprite):
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
         self.rect.x = self.x
-        self.collide_with_walls('x')
         self.rect.y = self.y
+        self.collide_with_walls('x')
         self.collide_with_walls('y')
+        self.collide_with_movable('x')
+        self.collide_with_movable('y')
         self.collide_with_group(self.game.grow, True)
         self.collide_with_group(self.game.shrink, True)
         self.collide_with_group(self.game.coins, True)
         self.collide_with_group(self.game.ghost, False)
+        self.collide_with_group(self.game.gost, False)
 
 #write a wall class
 class Wall(pg.sprite.Sprite):
@@ -257,12 +284,9 @@ class Ghost(pg.sprite.Sprite):
             self.rect.x += self.speed * self.distance_x / self.distance
             self.rect.y += self.speed * self.distance_y / self.distance
 
-    def collide_with_player(self):
-        if self.game.player.x == self.x and self.game.player.y == self.y:
-            self.game.quit()
-
     def update(self):
         self.move()
+        
 
 #enemy type, pathfinding -- test (experimental)
 class Gost(pg.sprite.Sprite):
@@ -270,11 +294,27 @@ class Gost(pg.sprite.Sprite):
         self.groups = game.all_sprites, game.gost
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.ghost_img
+        self.image = game.gost_img
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
 
-            
+
+class Movable(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.movable
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = game.movable_img
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+
+
+    def update(self):
+        self.x = self.rect.x
+        self.y = self.rect.y
