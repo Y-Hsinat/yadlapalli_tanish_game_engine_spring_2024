@@ -93,19 +93,19 @@ class Player(pg.sprite.Sprite):
             
             #check for hit with Grow
             if str(hits[0].__class__.__name__) == "Grow":
-                self.image = pg.Surface((self.rect.height * 2, self.rect.width * 2))
-                self.image.fill((GREEN))
-                self.rect.width = self.rect.width * 2
-                self.rect.height = self.rect.height * 2
+                self.image = pg.Surface((TILESIZE*2, TILESIZE*2))
+                self.spritesheet = Spritesheet(path.join(img_folder, 'bigplayer.png'))
+                self.load_images()
+                self.rect = self.image.get_rect()
                 #decrease speed, or set back to original
                 self.speed = self.speed / 1.667
                 
             #check for hit with shrink
             if str(hits[0].__class__.__name__) == "Shrink":
-                self.image = pg.Surface((self.rect.height / 2, self.rect.width / 2))
-                self.image.fill((GREEN))
-                self.rect.width = self.rect.width / 2
-                self.rect.height = self.rect.height / 2
+                self.image = pg.Surface((TILESIZE/2, TILESIZE/2))
+                self.spritesheet = Spritesheet(path.join(img_folder, 'smallplayer.png'))
+                self.load_images()
+                self.rect = self.image.get_rect()
                 #increase speed, or set back to original
                 self.speed = self.speed * 1.667
             
@@ -113,12 +113,13 @@ class Player(pg.sprite.Sprite):
             if str(hits[0].__class__.__name__) == "Ghost":
                 self.hitpoints -= 10
                 if self.hitpoints == 0:
-                    sys.exit()
+                    self.game.die()
+
             #collide with spike, die
             if str(hits[0].__class__.__name__) == "Gost":
                 self.hitpoints -= 2.5
                 if self.hitpoints == 0:
-                    sys.exit()
+                    self.game.die()
 
     #gets all key inputs
     def get_keys(self):

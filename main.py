@@ -11,6 +11,7 @@ import pygame as pg
 from settings import *
 from utils import *
 from sprites import *
+from time import *
 import sys
 import os
 from os import path
@@ -257,12 +258,10 @@ class Game:
                 if tile == '%':
                     Movable(self, col, row)
 
-    def show_start_screen(self):
-        pass
-
-    def show_go_screen(self):
-        pass            
-
+    def die(self):
+        self.change_level("map.txt")
+        self.current_map = 0
+        
 ##############Calling Class "Game"/Instantiating Game#############
 g = Game()
 # g.show_go_screen()
