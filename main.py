@@ -253,6 +253,9 @@ class Game:
                 #spawn pathfinding ;gost;
                 if tile == ';':
                     Gost(self, col, row)
+                #spawn movable
+                if tile == '%':
+                    Movable(self, col, row)
 
     def show_start_screen(self):
         pass

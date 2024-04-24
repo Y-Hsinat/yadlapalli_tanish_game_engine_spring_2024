@@ -133,7 +133,7 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_DOWN] or keys[pg.K_d]:
             self.vy = self.speed #PLAYER SPEED
         if keys[pg.K_v]:
-            self.game.change_level()
+            self.game.change_level(self.game.map)
 
     #updated update (new update)
     def update(self):
