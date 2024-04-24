@@ -34,6 +34,14 @@ class Player(pg.sprite.Sprite):
         self.standing_frames = [self.spritesheet.get_image(0, 0, 32, 32),
                                 self.spritesheet.get_image(32, 0, 32, 32)]
         
+    def load_images_large(self):
+        self.standing_frames = [self.spritesheet.get_image(0, 0, 64, 64),
+                                self.spritesheet.get_image(64, 0, 64, 64)]
+    
+    def load_images_small(self):
+        self.standing_frames = [self.spritesheet.get_image(0, 0, 16, 16),
+                                self.spritesheet.get_image(16, 0, 16, 16)]
+
     def animate(self):
         now = pg.time.get_ticks()
         if now - self.last_update > 350:
@@ -95,7 +103,7 @@ class Player(pg.sprite.Sprite):
             if str(hits[0].__class__.__name__) == "Grow":
                 self.image = pg.Surface((TILESIZE*2, TILESIZE*2))
                 self.spritesheet = Spritesheet(path.join(img_folder, 'bigplayer.png'))
-                self.load_images()
+                self.load_images_large()
                 self.rect = self.image.get_rect()
                 #decrease speed, or set back to original
                 self.speed = self.speed / 1.667
@@ -104,7 +112,7 @@ class Player(pg.sprite.Sprite):
             if str(hits[0].__class__.__name__) == "Shrink":
                 self.image = pg.Surface((TILESIZE/2, TILESIZE/2))
                 self.spritesheet = Spritesheet(path.join(img_folder, 'smallplayer.png'))
-                self.load_images()
+                self.load_images_small()
                 self.rect = self.image.get_rect()
                 #increase speed, or set back to original
                 self.speed = self.speed * 1.667
