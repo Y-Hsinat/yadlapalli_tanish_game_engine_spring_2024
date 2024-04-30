@@ -16,6 +16,7 @@ import sys
 import os
 from os import path
 from random import randint
+import time
 
 """
 Goals:
@@ -108,6 +109,8 @@ class Game:
         self.ghost = pg.sprite.Group()
         self.gost = pg.sprite.Group()
         self.movable = pg.sprite.Group()
+        self.bombs = pg.sprite.Group()
+        self.particles = pg.sprite.Group()
         for row, tiles in enumerate(self.map_data):
             print(row)
             for col, tile in enumerate(tiles):

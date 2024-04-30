@@ -3,9 +3,7 @@ import pygame as pg
 import random
 from settings import *
 from utils import *
-import os
 from os import path
-import sys
 
 
 game_folder = path.dirname(__file__)
@@ -143,6 +141,8 @@ class Player(pg.sprite.Sprite):
             self.vy = self.speed #PLAYER SPEED
         if keys[pg.K_v]:
             self.game.change_level(self.game.map)
+        if keys[pg.K_SPACE]:
+            Bomb(self.game, self.x, self.y)
 
     #updated update (new update)
     def update(self):
@@ -327,3 +327,57 @@ class Movable(pg.sprite.Sprite):
     def update(self):
         self.x = self.rect.x
         self.y = self.rect.y
+
+class Bomb(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.bombs
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(RED)  # Assuming RED color for the bomb
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.explosion_radius = 3 * TILESIZE  # Adjust as needed
+        self.explosion_power = 150  # Adjust as needed
+        self.colors = [(255, 69, 0), 
+                       (255, 165, 0), 
+                       (255, 255, 0), 
+                       (255, 255, 255), 
+                       (255, 215, 0), 
+                       (255, 140, 0), 
+                       (255, 0, 0), 
+                       (135, 206, 235)]
+
+    def explode(self):
+        # Find walls in the explosion radius
+        walls_to_destroy = pg.sprite.spritecollide(self, self.game.walls, False)
+        for wall in walls_to_destroy:
+            # Calculate distance between bomb and wall
+            distance = pg.math.Vector2(wall.rect.center).distance_to(self.rect.center)
+            if distance <= self.explosion_radius:
+                # Destroy the wall
+                wall.kill()
+
+        # Generate explosion particles
+        explosion_position = self.rect.center
+        for _ in range(100):  # Adjust the number of particles
+            Particle(self.game, explosion_position, random.choice(self.colors), random.randint(1, 5))
+
+        # Apply forces to nearby sprites (if any) based on distance
+        for sprite in self.game.all_sprites:
+            if sprite != self:
+                distance_vector = pg.math.Vector2(sprite.rect.center) - pg.math.Vector2(explosion_position)
+                distance = distance_vector.length()
+                if distance < self.explosion_radius:
+                    force_magnitude = (1 - (distance / self.explosion_radius)) * self.explosion_power
+                    if distance != 0:
+                        force = distance_vector.normalize() * force_magnitude
+                    else:
+                        force = pg.math.Vector2(0, 0) 
+                    
+                    sprite.vx += force.x
+                    sprite.vy += force.y
+
+    def update(self):
+        self.explode()  # Explode immediately upon creation
+        self.kill()  # Destroy the bomb after exploding
