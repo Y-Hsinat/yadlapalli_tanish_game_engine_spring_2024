@@ -1,5 +1,5 @@
 import pygame as pg
-from random import *
+import random
 from settings import *
 
 class Spritesheet:
@@ -23,10 +23,12 @@ class Particle(pg.sprite.Sprite):
         self.image = pg.Surface((self.radius * 2, self.radius * 2), pg.SRCALPHA)  # Make the surface transparent
         self.rect = self.image.get_rect()
         self.rect.center = pos
-        self.vel = pg.math.Vector2(random.uniform(-2, 5), random.uniform(-3, 6))  # Random initial velocity
+        self.vel = pg.math.Vector2(random.uniform(-5, 2), random.uniform(-3, 6))  # Random initial velocity
         self.pos = pg.math.Vector2(pos)
         self.size_decay_rate = 0.1  # Rate at which size decreases over time
-        self.alpha_decay_rate = 2  # Rate at which alpha decreases over time
+        self.alpha_decay_rate = 4  # Rate at which alpha decreases over time
+        self.vx = self.vel.x
+        self.vy = self.vel.y
 
         # Draw a circle on the surface
         pg.draw.circle(self.image, self.color, (self.radius, self.radius), self.radius)

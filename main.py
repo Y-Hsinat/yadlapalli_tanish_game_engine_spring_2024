@@ -15,8 +15,7 @@ from time import *
 import sys
 import os
 from os import path
-from random import randint
-import time
+import random
 
 """
 Goals:

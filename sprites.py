@@ -337,16 +337,14 @@ class Bomb(pg.sprite.Sprite):
         self.image.fill(RED)  # Assuming RED color for the bomb
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.explosion_radius = 3 * TILESIZE  # Adjust as needed
-        self.explosion_power = 150  # Adjust as needed
-        self.colors = [(255, 69, 0), 
-                       (255, 165, 0), 
+        self.explosion_radius = 5 * TILESIZE # Adjust as needed
+        self.explosion_power = 200  # Adjust as needed
+        self.colors = [(255, 255, 255), 
                        (255, 255, 0), 
-                       (255, 255, 255), 
-                       (255, 215, 0), 
-                       (255, 140, 0), 
+                       (255, 165, 0), 
                        (255, 0, 0), 
-                       (135, 206, 235)]
+                       (139, 0, 0), 
+                       (0, 0, 0)]
 
     def explode(self):
         # Find walls in the explosion radius
@@ -360,11 +358,11 @@ class Bomb(pg.sprite.Sprite):
 
         # Generate explosion particles
         explosion_position = self.rect.center
-        for _ in range(100):  # Adjust the number of particles
-            Particle(self.game, explosion_position, random.choice(self.colors), random.randint(1, 5))
+        for _ in range(200):  # Adjust the number of particles
+            Particle(self.game, explosion_position, random.choice(self.colors), random.randint(1, 3))
 
         # Apply forces to nearby sprites (if any) based on distance
-        for sprite in self.game.all_sprites:
+        for sprite in self.game.particles:
             if sprite != self:
                 distance_vector = pg.math.Vector2(sprite.rect.center) - pg.math.Vector2(explosion_position)
                 distance = distance_vector.length()
