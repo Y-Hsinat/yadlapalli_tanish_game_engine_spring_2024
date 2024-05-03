@@ -5,7 +5,6 @@ from settings import *
 from utils import *
 from os import path
 
-
 game_folder = path.dirname(__file__)
 img_folder = path.join(game_folder, 'images')
 
@@ -27,6 +26,7 @@ class Player(pg.sprite.Sprite):
         self.moneybags = 0
         self.current_frame = 0
         self.last_update = 0
+        self.bombs = 0
 
     def load_images(self):
         self.standing_frames = [self.spritesheet.get_image(0, 0, 32, 32),
@@ -127,6 +127,9 @@ class Player(pg.sprite.Sprite):
                 if self.hitpoints == 0:
                     self.game.die()
 
+            if str(hits[0].__class__.__name__) == "Bombdown":
+                self.bombs += 1
+
     #gets all key inputs
     def get_keys(self):
         self.vx, self.vy = 0, 0
@@ -142,7 +145,10 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_v]:
             self.game.change_level(self.game.map)
         if keys[pg.K_SPACE]:
-            Bomb(self.game, self.x, self.y)
+            if self.bombs != 0:
+                Bomb(self.game, self.x, self.y + TILESIZE)
+                self.bombs -= 1
+            
 
     #updated update (new update)
     def update(self):
@@ -161,7 +167,7 @@ class Player(pg.sprite.Sprite):
         self.collide_with_group(self.game.coins, True)
         self.collide_with_group(self.game.ghost, False)
         self.collide_with_group(self.game.gost, False)
-
+        self.collide_with_group(self.game.bombdowns, True)
 #write a wall class
 class Wall(pg.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -328,23 +334,60 @@ class Movable(pg.sprite.Sprite):
         self.x = self.rect.x
         self.y = self.rect.y
 
+
+
+class Bombdown(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.bombdowns
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = game.bomb_img #CHANGE THE IMAGE!
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+
+
+
+#modified from ChatGPT (Methods only, however)
 class Bomb(pg.sprite.Sprite):
     def __init__(self, game, x, y):
+        self.x = x
+        self.y = y
         self.groups = game.all_sprites, game.bombs
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(RED)  # Assuming RED color for the bomb
+        self.spritesheet = Spritesheet(path.join(img_folder, 'bombanimation.png'))
+        self.load_images()
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.explosion_radius = 5 * TILESIZE # Adjust as needed
-        self.explosion_power = 200  # Adjust as needed
+        self.explosion_power = 150  # Adjust as needed
+        self.current_frame = 0
+        self.last_update = 0
         self.colors = [(255, 255, 255), 
                        (255, 255, 0), 
                        (255, 165, 0), 
                        (255, 0, 0), 
                        (139, 0, 0), 
                        (0, 0, 0)]
+    
+    def load_images(self):
+        self.standing_frames = [self.spritesheet.get_image(0, 0, 32, 32),
+                                self.spritesheet.get_image(32, 0, 32, 32)]
+        
+    def animate(self):
+        now = pg.time.get_ticks()
+        if now - self.last_update > 350:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.standing_frames)
+            bottom = self.rect.bottom
+            self.image = self.standing_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+
 
     def explode(self):
         # Find walls in the explosion radius
@@ -359,7 +402,7 @@ class Bomb(pg.sprite.Sprite):
         # Generate explosion particles
         explosion_position = self.rect.center
         for _ in range(200):  # Adjust the number of particles
-            Particle(self.game, explosion_position, random.choice(self.colors), random.randint(1, 3))
+            Particle(self.game, explosion_position, random.choice(self.colors), random.randint(10, 15))
 
         # Apply forces to nearby sprites (if any) based on distance
         for sprite in self.game.particles:
@@ -377,5 +420,8 @@ class Bomb(pg.sprite.Sprite):
                     sprite.vy += force.y
 
     def update(self):
+        self.rect.x = self.x
+        self.rect.y = self.y
+        self.animate()
         self.explode()  # Explode immediately upon creation
         self.kill()  # Destroy the bomb after exploding

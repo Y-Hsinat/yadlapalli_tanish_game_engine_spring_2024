@@ -11,7 +11,6 @@ import pygame as pg
 from settings import *
 from utils import *
 from sprites import *
-from time import *
 import sys
 import os
 from os import path
@@ -24,7 +23,7 @@ Randomized Maps
 Get Border (sprites facing the right way, facing inward)
 
 BETA Goals:
-Gameplay goal: Changing Levels
+Gameplay goal: Changing Levels; Movable Block
 (Maybe) Add more puzzle-based powerups (like something that allows you to move blocks, etc.)
 Secondary Goals: repurpose ghost into static 'spike,' get small and enlarge powerup working.
 """
@@ -43,6 +42,8 @@ def draw_health_bar(surf, x, y, pct):
     #actually draws the health bar and stuff.
     pg.draw.rect(surf, GREEN, fill_rect)
     pg.draw.rect(surf, WHITE, outline_rect, 2)
+    
+
 
 ######################Create Game Class#######################
 
@@ -84,6 +85,7 @@ class Game:
         self.grow_img = pg.image.load(path.join(img_folder, 'Grow.png')).convert_alpha()
         self.gost_img = pg.image.load(path.join(img_folder, 'gost.png')).convert_alpha()
         self.movable_img = pg.image.load(path.join(img_folder, 'Movable.png')).convert_alpha()
+        self.bomb_img = pg.image.load(path.join(img_folder, 'bomb.png')).convert_alpha()
         '''
         The with statement is a context manager in Python. 
         It is used to ensure that a resource is properly closed or released 
@@ -109,6 +111,7 @@ class Game:
         self.gost = pg.sprite.Group()
         self.movable = pg.sprite.Group()
         self.bombs = pg.sprite.Group()
+        self.bombdowns = pg.sprite.Group()
         self.particles = pg.sprite.Group()
         for row, tiles in enumerate(self.map_data):
             print(row)
@@ -151,6 +154,8 @@ class Game:
                     Gost(self, col, row)
                 if tile == '%':
                     Movable(self, col, row)
+                if tile == '&':
+                    Bombdown(self, col, row)
 
     #Run methods, causes the game to work.
     def run(self):
@@ -193,6 +198,7 @@ class Game:
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
         draw_health_bar(self.screen, 27, 10, self.player.hitpoints)
+        self.draw_bomb_count(800, 30)
         pg.display.flip()
 
     #events, and checks if we clicked 'X'
@@ -259,10 +265,23 @@ class Game:
                 #spawn movable
                 if tile == '%':
                     Movable(self, col, row)
+                if tile == '&':
+                    Bombdown(self, col, row)
 
+    #make the lvl reset work
     def die(self):
-        self.change_level("map.txt")
         self.current_map = 0
+        self.map = str(os.listdir(self.map_folder)[self.current_map])
+        self.change_level(self.map)
+
+    #draw bomb count UI
+    def draw_bomb_count(self, x, y):
+        count = self.player.bombs
+        while count != 0:
+            pg.draw.circle(self.screen, GREEN, (x, y), 25)
+            count -= 1
+            x += 75
+
         
 ##############Calling Class "Game"/Instantiating Game#############
 g = Game()

@@ -13,6 +13,7 @@ class Spritesheet:
         # image = pg.transform.scale(image, (width // 2, height // 2))
         return image
     
+#modified from ChatGPT
 class Particle(pg.sprite.Sprite):
     def __init__(self, game, pos, color, radius):
         self.groups = game.all_sprites, game.particles
@@ -23,10 +24,10 @@ class Particle(pg.sprite.Sprite):
         self.image = pg.Surface((self.radius * 2, self.radius * 2), pg.SRCALPHA)  # Make the surface transparent
         self.rect = self.image.get_rect()
         self.rect.center = pos
-        self.vel = pg.math.Vector2(random.uniform(-5, 2), random.uniform(-3, 6))  # Random initial velocity
+        self.vel = pg.math.Vector2(random.uniform(-2, 2), random.uniform(-2, 2))  # Random initial velocity
         self.pos = pg.math.Vector2(pos)
-        self.size_decay_rate = 0.1  # Rate at which size decreases over time
-        self.alpha_decay_rate = 4  # Rate at which alpha decreases over time
+        self.size_decay_rate = 0.3  # Rate at which size decreases over time
+        self.alpha_decay_rate = 0.5  # Rate at which alpha decreases over time
         self.vx = self.vel.x
         self.vy = self.vel.y
 
@@ -42,15 +43,20 @@ class Particle(pg.sprite.Sprite):
         self.rect.center = self.pos
 
         # Fade out and decrease size
-        self.image.set_alpha(max(0, self.image.get_alpha() - self.alpha_decay_rate))
         self.radius = max(0, self.radius - self.size_decay_rate)
-        pg.draw.circle(self.image, self.color, (self.radius, self.radius), self.radius)
+
+        # Recreate the image with the new radius and adjusted alpha
+        alpha = max(0, self.image.get_alpha() - self.alpha_decay_rate)
+        self.image = pg.Surface((self.radius * 2, self.radius * 2), pg.SRCALPHA)
+        pg.draw.circle(self.image, (self.color[0], self.color[1], self.color[2], alpha), (self.radius, self.radius), self.radius)
 
         # Kill particle if it becomes too small or completely transparent
-        if self.image.get_alpha() <= 0:
+        if alpha <= 0 or self.radius <= 0:
             self.kill()
+            print("Killed!")
         
         self.vx = self.vel.x
         self.vy = self.vel.y
 
-        
+
+                
