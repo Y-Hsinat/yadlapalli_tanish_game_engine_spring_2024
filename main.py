@@ -277,10 +277,8 @@ class Game:
     #draw bomb count UI
     def draw_bomb_count(self, x, y):
         count = self.player.bombs
-        while count != 0:
-            pg.draw.circle(self.screen, GREEN, (x, y), 25)
-            count -= 1
-            x += 75
+        for i in range(count):
+            pg.draw.circle(self.screen, GREEN, (x + i * 75, y), 25)
 
         
 ##############Calling Class "Game"/Instantiating Game#############

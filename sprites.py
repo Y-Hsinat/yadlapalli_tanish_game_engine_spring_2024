@@ -144,10 +144,16 @@ class Player(pg.sprite.Sprite):
             self.vy = self.speed #PLAYER SPEED
         if keys[pg.K_v]:
             self.game.change_level(self.game.map)
-        if keys[pg.K_SPACE]:
-            if self.bombs != 0:
+        #with help from CHATGPT
+        if keys[pg.K_SPACE] and self.bombs > 0:
+            # Check if bomb placement key was pressed and player has bombs available
+            if not self.bomb_placed:
+                # Check if a bomb hasn't been placed yet
                 Bomb(self.game, self.x, self.y + TILESIZE)
-                self.bombs -= 1
+                self.bomb_placed = True  # Set flag to indicate bomb was placed
+                self.bombs -= 1  # Decrement bomb count
+        else:
+            self.bomb_placed = False  # Reset bomb placement flag
             
 
     #updated update (new update)
@@ -363,7 +369,7 @@ class Bomb(pg.sprite.Sprite):
         self.load_images()
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.explosion_radius = 5 * TILESIZE # Adjust as needed
+        self.explosion_radius = 2 * TILESIZE # Adjust as needed
         self.explosion_power = 150  # Adjust as needed
         self.current_frame = 0
         self.last_update = 0
@@ -373,6 +379,7 @@ class Bomb(pg.sprite.Sprite):
                        (255, 0, 0), 
                        (139, 0, 0), 
                        (0, 0, 0)]
+        self.timer = 5
     
     def load_images(self):
         self.standing_frames = [self.spritesheet.get_image(0, 0, 32, 32),
@@ -390,14 +397,13 @@ class Bomb(pg.sprite.Sprite):
 
 
     def explode(self):
-        # Find walls in the explosion radius
-        walls_to_destroy = pg.sprite.spritecollide(self, self.game.walls, False)
-        for wall in walls_to_destroy:
-            # Calculate distance between bomb and wall
-            distance = pg.math.Vector2(wall.rect.center).distance_to(self.rect.center)
+        # Loop through all blocks in the game
+        for block in self.game.walls:
+            # Calculate distance between bomb and block
+            distance = pg.math.Vector2(block.rect.center).distance_to(self.rect.center)
             if distance <= self.explosion_radius:
-                # Destroy the wall
-                wall.kill()
+                # Destroy the block
+                block.kill()
 
         # Generate explosion particles
         explosion_position = self.rect.center
@@ -423,5 +429,8 @@ class Bomb(pg.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
         self.animate()
-        self.explode()  # Explode immediately upon creation
-        self.kill()  # Destroy the bomb after exploding
+        #bomb explodes after three seconds
+        self.timer -= self.game.dt
+        if self.timer <= 0:
+            self.explode()
+            self.kill()
