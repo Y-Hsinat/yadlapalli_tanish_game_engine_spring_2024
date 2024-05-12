@@ -86,6 +86,8 @@ class Game:
         self.gost_img = pg.image.load(path.join(img_folder, 'gost.png')).convert_alpha()
         self.movable_img = pg.image.load(path.join(img_folder, 'Movable.png')).convert_alpha()
         self.bomb_img = pg.image.load(path.join(img_folder, 'bomb.png')).convert_alpha()
+        self.button_img = pg.image.load(path.join(img_folder, 'button.png')).convert_alpha()
+        self.buttondown_img = pg.image.load(path.join(img_folder, 'buttondown.png')).convert_alpha()
         '''
         The with statement is a context manager in Python. 
         It is used to ensure that a resource is properly closed or released 
@@ -113,6 +115,7 @@ class Game:
         self.bombs = pg.sprite.Group()
         self.bombdowns = pg.sprite.Group()
         self.particles = pg.sprite.Group()
+        self.buttons = pg.sprite.Group()
         for row, tiles in enumerate(self.map_data):
             print(row)
             for col, tile in enumerate(tiles):
@@ -156,6 +159,9 @@ class Game:
                     Movable(self, col, row)
                 if tile == '&':
                     Bombdown(self, col, row)
+                if tile == '*':
+                    Button(self, col, row)
+
 
     #Run methods, causes the game to work.
     def run(self):
@@ -179,7 +185,7 @@ class Game:
     #updates all sprites
     def update(self):
         self.all_sprites.update()
-        if self.player.moneybags == 9:
+        if self.player.moneybags >= 9:
             self.current_map += 1
             self.map = str(os.listdir(self.map_folder)[self.current_map])
             self.change_level(self.map)
@@ -267,6 +273,8 @@ class Game:
                     Movable(self, col, row)
                 if tile == '&':
                     Bombdown(self, col, row)
+                if tile == '*':
+                    Button(self, col, row)
 
     #make the lvl reset work
     def die(self):

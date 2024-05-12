@@ -96,6 +96,7 @@ class Player(pg.sprite.Sprite):
             if str(hits[0].__class__.__name__) == "Coin":
                 #increase coin count
                 self.moneybags += 1
+                print(self.moneybags)
             
             #check for hit with Grow
             if str(hits[0].__class__.__name__) == "Grow":
@@ -104,7 +105,7 @@ class Player(pg.sprite.Sprite):
                 self.load_images_large()
                 self.rect = self.image.get_rect()
                 #decrease speed, or set back to original
-                self.speed = self.speed / 1.667
+                self.speed = 149.970005999
                 
             #check for hit with shrink
             if str(hits[0].__class__.__name__) == "Shrink":
@@ -113,7 +114,7 @@ class Player(pg.sprite.Sprite):
                 self.load_images_small()
                 self.rect = self.image.get_rect()
                 #increase speed, or set back to original
-                self.speed = self.speed * 1.667
+                self.speed = 416.75
             
             #collide with enemy, die.
             if str(hits[0].__class__.__name__) == "Ghost":
@@ -136,11 +137,11 @@ class Player(pg.sprite.Sprite):
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT] or keys[pg.K_e]:
             self.vx = -self.speed #PLAYER SPEED
-        if keys[pg.K_RIGHT] or keys[pg.K_f]:
+        elif keys[pg.K_RIGHT] or keys[pg.K_f]:
             self.vx = self.speed #PLAYER SPEED
-        if keys[pg.K_UP] or keys[pg.K_r]:
+        elif keys[pg.K_UP] or keys[pg.K_r]:
             self.vy = -self.speed #PLAYER SPEED
-        if keys[pg.K_DOWN] or keys[pg.K_d]:
+        elif keys[pg.K_DOWN] or keys[pg.K_d]:
             self.vy = self.speed #PLAYER SPEED
         if keys[pg.K_v]:
             self.game.change_level(self.game.map)
@@ -275,6 +276,28 @@ class Coin(pg.sprite.Sprite):
         self.rect.y = y * TILESIZE
         
 
+class Button(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.buttons
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = game.button_img
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+
+    def buttonon(self):
+        hits = pg.sprite.spritecollide(self, self.game.movable, False)
+        if hits: 
+            self.image = self.game.buttondown_img
+            for block in self.game.gost:
+                    block.kill()
+
+    def update(self):
+        self.buttonon()
+
 class Ghost(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.ghost
@@ -399,11 +422,12 @@ class Bomb(pg.sprite.Sprite):
     def explode(self):
         # Loop through all blocks in the game
         for block in self.game.walls:
-            # Calculate distance between bomb and block
-            distance = pg.math.Vector2(block.rect.center).distance_to(self.rect.center)
-            if distance <= self.explosion_radius:
-                # Destroy the block
-                block.kill()
+            if str(block.__class__.__name__) == "Wall":
+                # Calculate distance between bomb and block
+                distance = pg.math.Vector2(block.rect.center).distance_to(self.rect.center)
+                if distance <= self.explosion_radius:
+                    # Destroy the block
+                    block.kill()
 
         # Generate explosion particles
         explosion_position = self.rect.center
