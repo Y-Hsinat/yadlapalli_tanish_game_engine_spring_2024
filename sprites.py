@@ -124,7 +124,7 @@ class Player(pg.sprite.Sprite):
 
             #collide with spike, die
             if str(hits[0].__class__.__name__) == "Gost":
-                self.hitpoints -= 2.5
+                self.hitpoints -= 4.5
                 if self.hitpoints == 0:
                     self.game.die()
 
@@ -137,11 +137,11 @@ class Player(pg.sprite.Sprite):
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT] or keys[pg.K_e]:
             self.vx = -self.speed #PLAYER SPEED
-        elif keys[pg.K_RIGHT] or keys[pg.K_f]:
+        if keys[pg.K_RIGHT] or keys[pg.K_f]:
             self.vx = self.speed #PLAYER SPEED
-        elif keys[pg.K_UP] or keys[pg.K_r]:
+        if keys[pg.K_UP] or keys[pg.K_r]:
             self.vy = -self.speed #PLAYER SPEED
-        elif keys[pg.K_DOWN] or keys[pg.K_d]:
+        if keys[pg.K_DOWN] or keys[pg.K_d]:
             self.vy = self.speed #PLAYER SPEED
         if keys[pg.K_v]:
             self.game.change_level(self.game.map)
@@ -379,7 +379,7 @@ class Bombdown(pg.sprite.Sprite):
 
 
 
-#modified from ChatGPT (Methods only, however)
+#modified from ChatGPT (Methods only, however, animation was me)
 class Bomb(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self.x = x
