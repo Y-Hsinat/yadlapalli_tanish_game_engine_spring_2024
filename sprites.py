@@ -119,13 +119,13 @@ class Player(pg.sprite.Sprite):
             #collide with enemy, die.
             if str(hits[0].__class__.__name__) == "Ghost":
                 self.hitpoints -= 10
-                if self.hitpoints == 0:
+                if self.hitpoints <= 0:
                     self.game.die()
 
             #collide with spike, die
             if str(hits[0].__class__.__name__) == "Gost":
                 self.hitpoints -= 4.5
-                if self.hitpoints == 0:
+                if self.hitpoints <= 0:
                     self.game.die()
 
             if str(hits[0].__class__.__name__) == "Bombdown":
@@ -402,7 +402,7 @@ class Bomb(pg.sprite.Sprite):
                        (255, 0, 0), 
                        (139, 0, 0), 
                        (0, 0, 0)]
-        self.timer = 5
+        self.timer = 2
     
     def load_images(self):
         self.standing_frames = [self.spritesheet.get_image(0, 0, 32, 32),
@@ -431,7 +431,7 @@ class Bomb(pg.sprite.Sprite):
 
         # Generate explosion particles
         explosion_position = self.rect.center
-        for _ in range(200):  # Adjust the number of particles
+        for _ in range(250):  # Adjust the number of particles
             Particle(self.game, explosion_position, random.choice(self.colors), random.randint(10, 15))
 
         # Apply forces to nearby sprites (if any) based on distance
