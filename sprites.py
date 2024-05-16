@@ -137,13 +137,13 @@ class Player(pg.sprite.Sprite):
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT] or keys[pg.K_e]:
             self.vx = -self.speed #PLAYER SPEED
-        if keys[pg.K_RIGHT] or keys[pg.K_f]:
+        elif keys[pg.K_RIGHT] or keys[pg.K_f]:
             self.vx = self.speed #PLAYER SPEED
-        if keys[pg.K_UP] or keys[pg.K_r]:
+        elif keys[pg.K_UP] or keys[pg.K_r]:
             self.vy = -self.speed #PLAYER SPEED
-        if keys[pg.K_DOWN] or keys[pg.K_d]:
+        elif keys[pg.K_DOWN] or keys[pg.K_d]:
             self.vy = self.speed #PLAYER SPEED
-        if keys[pg.K_v]:
+        elif keys[pg.K_v]:
             self.game.change_level(self.game.map)
         #with help from CHATGPT
         if keys[pg.K_SPACE] and self.bombs > 0:
