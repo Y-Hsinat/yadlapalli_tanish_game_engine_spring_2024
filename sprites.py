@@ -143,7 +143,7 @@ class Player(pg.sprite.Sprite):
             self.vy = -self.speed #PLAYER SPEED
         elif keys[pg.K_DOWN] or keys[pg.K_d]:
             self.vy = self.speed #PLAYER SPEED
-        elif keys[pg.K_v]:
+        if keys[pg.K_v]:
             self.game.change_level(self.game.map)
         #with help from CHATGPT
         if keys[pg.K_SPACE] and self.bombs > 0:
