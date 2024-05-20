@@ -188,8 +188,11 @@ class Game:
         self.all_sprites.update()
         if self.player.moneybags >= 9:
             self.current_map += 1
-            self.map = str(os.listdir(self.map_folder)[self.current_map])
-            self.change_level(self.map)
+            if self.current_map == 4:
+                self.win_screen()
+            else:
+                self.map = str(os.listdir(self.map_folder)[self.current_map])
+                self.change_level(self.map)
             
     #draw text to the screen
     def draw_text(self, surface, text, size, color, x, y):
@@ -288,6 +291,10 @@ class Game:
         count = self.player.bombs
         for i in range(count):
             pg.draw.circle(self.screen, GREEN, (x + i * 75, y), 25)
+
+    def win_screen(self):
+        self.screen.fill(BLACK)
+        self.draw_text(self.screen, "Win.", 20, WHITE, 200, 200)
 
         
 ##############Calling Class "Game"/Instantiating Game#############

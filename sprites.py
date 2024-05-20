@@ -143,7 +143,7 @@ class Player(pg.sprite.Sprite):
             self.vy = -self.speed #PLAYER SPEED
         elif keys[pg.K_DOWN] or keys[pg.K_d]:
             self.vy = self.speed #PLAYER SPEED
-        if keys[pg.K_v]:
+        elif keys[pg.K_v]:
             self.game.change_level(self.game.map)
         #with help from CHATGPT
         if keys[pg.K_SPACE] and self.bombs > 0:
@@ -175,6 +175,7 @@ class Player(pg.sprite.Sprite):
         self.collide_with_group(self.game.ghost, False)
         self.collide_with_group(self.game.gost, False)
         self.collide_with_group(self.game.bombdowns, True)
+        
 #write a wall class
 class Wall(pg.sprite.Sprite):
     def __init__(self, game, x, y):
